@@ -44,7 +44,6 @@ Starting at: `if ($config{$host}{'on-root-domain'}) {`
             if ($dot_count > 1) {
                   info("debug: There are one or more subdomains in %s", $host);
                   ($sub_domain, $domain) = split(/\.(?=[^.]+\.[^.]+$)/, $host, 2);
-                  ## $rrset_type = "CNAME" ?
             } else {
                   info("debug: There is no subdomain in %s", $host);
                   $sub_domain = '';
