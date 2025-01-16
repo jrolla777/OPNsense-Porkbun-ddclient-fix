@@ -42,13 +42,17 @@ Started at: `if ($config{$host}{'on-root-domain'}) {`
                   $domain = $host;
               }
 ```
+![image](https://github.com/user-attachments/assets/4a5617ef-b402-44ce-ac11-273f5e256ff5)
+
+
 16) Done. `Ctrl + X`, then `Y` to save, then enter
 17) Now, go to your OPNsense web GUI and **Disable secure shell login!!**
 18) Go to `Services > Dynamic DNS > Settings` and click the **+** to add a server
 19) Click to `Enable this virtual server`, give it a `description`, enter your `username` and `password` (these are the pk1_ and sk1_ key values you get from Porkbun), enter your hostname(s) to update, we'll use the `Interface` **IP check method**, `Interface` is **WAN**, **Enable** Force SSL, and then click **Save**
 
 ![image](https://github.com/user-attachments/assets/7859de43-9d45-4153-9acd-038cdd614ad6)
-20) Then click Apply at the bottom of the page.
+
+20) Then click **Apply** at the bottom of the page.
 
 
 
