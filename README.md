@@ -13,7 +13,9 @@ First, we need to update the API URL. That's easy, simple **sed** command to sub
 1. First we're going to enable ssh access. I usually have this disbaled unless I **have** to access the shell. Go to `System > Settings > Administration`. Check **Enable Secure Shell**
 2. And also check **Permit password login**
 3. Click **Save** at the bottom of the page
-![image](https://github.com/user-attachments/assets/05147d4c-ac4b-43f7-a442-cd0ab1514e21)
+   
+![image](https://github.com/user-attachments/assets/7dfd4366-1106-465b-a7ac-0247ba8dcd98)
+
 
 4. Log into your opnsense through your favorite terminal as a **non-root** user
 5. Log in as root, **run:** `su root`
