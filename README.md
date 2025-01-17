@@ -1,14 +1,23 @@
 # opnsense-porkbun-ddclient-fix
 Fix for the OPNsense Dynamic DNS service ddclient Porkbun API plugin
 
-Porkbun updated thier API URL but the Dynamic DNS plugin for OPNsense using ddlcient as the backend, has not been updated. So i searched and found the ddclient perl script at **/usr/local/sbin/ddclient**. It's been a long time since I worked with perl but thankfully it wasn't too complicated :) I worked on these steps over a couple afternoons so this is still very much a work in progress. 
+Porkbun updated thier API URL but the ddclient plugin has not been updated yet. People have suggesting using the caddy plugin since it has updated its Porkbun parts but I didn't feel like changing yet. So, until the plugin is updated, you can update the `ddclient` perl script yourself at `/usr/local/sbin/ddclient`!
 
-First, we need to update the API URL. That's easy, simple **sed** command to substitue in two lines. The next problem, which I'm not going to spend much time elaborating on now, the ddclient plugin Porkbun code was using **editByNameType** calls that was failing (https://porkbun.com/api/json/v3/documentation). The format needed to be changed and the 'on-root-domain' part seemed unnecessary. You could comment out the `if` block from Step 12 and simply replace with these two lines and the plugin will work if you don't need to update any sub-domains (ex. `sub2.sub1.domain.com`) 
+OK,  we need to update the API URL. That's easy, simple **sed** command to substitue two lines. The main problem, is the ddclient plugin Porkbun code was using incorrect **editByNameType** URI endpoints (newest docs here: `https://porkbun.com/api/json/v3/documentation`). I'm not sure if Porkbun's API call formating was changed at some point but there's lots of threads online about this plugin's issues handling Porkbun subdomains before the URL change. I don't know. 
 
+Example of the correctly formatted `retrieveByNameType` API Endpoint:
+`retrieveByNameType/domain.com/A/subdomain'
+
+Multiple subdomains are simply stacked. For exmaple, the URI Endpoint for host: `sub2.sub1.domain.com' would be:
+`https://api.porkbun.com/api/json/v3/dns/retrieveByNameType/domain.com/A/sub2.sub1'
+
+
+Either way, the 'on-root-domain' logic part of the script to organize the endpoint seemed unnecessary. I could quit here comment out that `if` block from Step 10, replace with these two lines:
 ```
     $sub_domain = '';
     $domain = $host;
 ```
+And the plugin will work for me! Since I don't actually use public subdomain DNS records. But, what about the people who do use subdomains? I got you fam, below are the steps to not only update the API URL but also add new logic to split subdomains for properfly formatted endpoint calls.
 
 1. First we're going to enable ssh access. I usually have this disbaled unless I **have** to access the shell. Go to `System > Settings > Administration`. Check **Enable Secure Shell**
 2. And also check **Permit password login**
