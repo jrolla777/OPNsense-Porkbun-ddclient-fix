@@ -3,7 +3,7 @@
 
 Porkbun updated thier API URL but the ddclient plugin has not been updated yet. People have suggesting using the caddy plugin since it has updated its Porkbun parts but I didn't feel like changing yet. So, until the plugin is updated, you can update the `ddclient` perl script yourself at `/usr/local/sbin/ddclient`!
 
-OK,  we need to update the API URL. That's easy, simple **sed** command to substitue two lines. The main problem, is the ddclient plugin Porkbun code was using incorrect **editByNameType** URI endpoints (newest docs here: `https://porkbun.com/api/json/v3/documentation`). I'm not sure if Porkbun's API call formating was changed at some point but there's lots of threads online about this plugin's issues handling Porkbun subdomains before the URL change. I don't know. 
+OK,  we need to update the API URL. That's easy, simple **sed** command to substitue two lines. The next problem, is the ddclient plugin Porkbun code was using incorrect **editByNameType** URI endpoints (newest docs here: `https://porkbun.com/api/json/v3/documentation`). I'm not sure if Porkbun's API call formating was changed at some point but there's lots of threads online about this plugin's issues handling Porkbun subdomains before the URL change. I don't know. 
 
 Here's an example of a correctly formatted `retrieveByNameType` API Endpoint:
 `/api/json/v3/dns/retrieveByNameType/domain.com/A/subdomain`
