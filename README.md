@@ -5,19 +5,22 @@ Porkbun updated thier API URL but the ddclient plugin has not been updated yet. 
 
 OK,  we need to update the API URL. That's easy, simple **sed** command to substitue two lines. The main problem, is the ddclient plugin Porkbun code was using incorrect **editByNameType** URI endpoints (newest docs here: `https://porkbun.com/api/json/v3/documentation`). I'm not sure if Porkbun's API call formating was changed at some point but there's lots of threads online about this plugin's issues handling Porkbun subdomains before the URL change. I don't know. 
 
-Example of the correctly formatted `retrieveByNameType` API Endpoint:
-`retrieveByNameType/domain.com/A/subdomain'
+Here's an example of a correctly formatted `retrieveByNameType` API Endpoint:
+`/api/json/v3/dns/retrieveByNameType/domain.com/A/subdomain`
 
-Multiple subdomains are simply stacked. For exmaple, the URI Endpoint for host: `sub2.sub1.domain.com' would be:
-`https://api.porkbun.com/api/json/v3/dns/retrieveByNameType/domain.com/A/sub2.sub1'
+Note: Multiple subdomains are simply stacked. For exmaple, the URI Endpoint for host: `sub2.sub1.domain.com` would be:
+
+`https://api.porkbun.com/api/json/v3/dns/retrieveByNameType/domain.com/A/sub2.sub1`
 
 
-Either way, the 'on-root-domain' logic part of the script to organize the endpoint seemed unnecessary. I could quit here comment out that `if` block from Step 10, replace with these two lines:
+The problem, is the 'on-root-domain' logic part of the script to organize the endpoint, it's unnecessary. You could comment out the `if ($config{$host}{'on-root-domain'})' block below in Step 10, replace with these two lines, and call it a day if you don't use subdomains:
+
 ```
     $sub_domain = '';
     $domain = $host;
 ```
-And the plugin will work for me! Since I don't actually use public subdomain DNS records. But, what about the people who do use subdomains? I got you fam, below are the steps to not only update the API URL but also add new logic to split subdomains for properfly formatted endpoint calls.
+
+But, let's just fix the logic anyway. Below are the steps to update the API URL and also add logic to split subdomains for properfly formatted endpoint calls.
 
 1. First we're going to enable ssh access. I usually have this disbaled unless I **have** to access the shell. Go to `System > Settings > Administration`. Check **Enable Secure Shell**
 2. And also check **Permit password login**
