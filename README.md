@@ -8,7 +8,7 @@ OK,  we need to update the API URL. That's easy, simple **sed** command to subst
 Here's an example of a correctly formatted `retrieveByNameType` API Endpoint:
 `/api/json/v3/dns/retrieveByNameType/domain.com/A/subdomain`
 
-Note: Multiple subdomains are simply stacked. For exmaple, the URI Endpoint for host: `sub2.sub1.domain.com` would be:
+**Note: **Multiple subdomains are simply stacked. For exmaple, the URI Endpoint for host: `sub2.sub1.domain.com` would be:
 
 `https://api.porkbun.com/api/json/v3/dns/retrieveByNameType/domain.com/A/sub2.sub1`
 
@@ -67,11 +67,55 @@ Starting at: `if ($config{$host}{'on-root-domain'}) {`
 12. Done. `Ctrl + X`, then `Y` to save, then enter
 13. Now, go to your OPNsense web GUI and **Disable secure shell login!!**
 14. After ssh is disbaled, go to `Services > Dynamic DNS > Settings` and click the **+** to add a server
-15. Click to `Enable this virtual server`, give it a `description`, enter your `username` and `password` (these are the pk1_ and sk1_ key values you get from Porkbun), enter your hostname(s) to update, we'll use the `Interface` **IP check method**, `Interface` is **WAN**, **Enable** Force SSL, and then click **Save**
+15. Click to `Enable this virtual server`, give it a `description`, enter your `username` and `password` (these are the pk1_ and sk1_ key values you get from Porkbun), enter your hostname(s) to update, we'll use the `Interface` **IP check method**, `Interface` is **WAN**, **Enable** `Force SSL`, and then click **Save**
 
-![image](https://github.com/user-attachments/assets/7859de43-9d45-4153-9acd-038cdd614ad6)
+![image](https://github.com/user-attachments/assets/47316c09-e18b-4e98-a39f-8741a96dd432)
+
 
 16. Then click **Apply** at the bottom of the page.
+
+
+To test this it's all working:
+1) You'll need active current Porkbun A Type DNS Records
+
+![image](https://github.com/user-attachments/assets/0570c5e3-dbe3-4758-8c8f-360d60e89e36)
+
+2) Proably should have stopped the service before we started, but go ahead and restart it now:
+
+![image](https://github.com/user-attachments/assets/72e10ea1-9974-4835-8b32-5244c0a4c930)
+
+3) Now check the Logs:
+
+![image](https://github.com/user-attachments/assets/18fb8b0d-7a00-4726-8785-d1a28d5d6299)
+
+```
+Notice	ddclient	 SENDING:  Curl system cmd to https://api.porkbun.com
+
+Notice	ddclient	 UPDATE:   updating testdomain.com
+Notice	ddclient	 INFO:     setting ipv4 address to 71.X.X.X for testdomain.com
+Notice	ddclient	 INFO:     debug: There is no subdomain in testdomain.com
+Notice	ddclient	 SENDING:  url="https://api.porkbun.com/api/json/v3/dns/retrieveByNameType/testdomain.com/A/"
+Notice	ddclient	 SUCCESS:  updating ipv4: skipped: testdomain.com address was already set to 71.X.X.X.
+
+Notice	ddclient	 UPDATE:   updating sub1.testdomain.com
+Notice	ddclient	 INFO:     setting ipv4 address to 71.X.X.X for sub1.testdomain.com
+Notice	ddclient	 INFO:     debug: There are one or more subdomains in sub1.testdomain.com
+Notice	ddclient	 SENDING:  url="https://api.porkbun.com/api/json/v3/dns/retrieveByNameType/testdomain.com/A/sub1"
+Notice	ddclient	 SUCCESS:  updating ipv4: skipped: sub1.testdomain.com address was already set to 71.X.X.X.
+
+Notice	ddclient	 UPDATE:   updating sub2.sub1.testdomain.com
+Notice	ddclient	 INFO:     setting ipv4 address to 71.X.X.X for sub2.sub1.testdomain.com
+Notice	ddclient	 INFO:     debug: There are one or more subdomains in sub2.sub1.testdomain.com
+Notice	ddclient	 SENDING:  url="https://api.porkbun.com/api/json/v3/dns/retrieveByNameType/testdomain.com/A/sub2.sub1"
+Notice	ddclient	 FAILED:   updating sub2.sub1.testdomain.com: No applicable existing records.  #### Failed to update as expected, since I dont have a sub2.sub1.testdomain.com DNS A Record ####
+
+Notice	ddclient	 UPDATE:   updating testdomain.com
+Notice	ddclient	 INFO:     setting ipv4 address to 71.X.X.X for testdomain.com
+Notice	ddclient	 INFO:     debug: There is no subdomain in testdomain.com
+Notice	ddclient	 INFO:     forcing updating sub3.sub2.sub1.testdomain.com because no cached entry exists.
+Notice	ddclient	 SENDING:  url="https://api.porkbun.com/api/json/v3/dns/retrieveByNameType/testdomain.com/A/sub3.sub2.sub1"
+Notice	ddclient	 SUCCESS:  updating ipv4: skipped: sub3.sub2.sub1.testdomain.com address was already set to 71.X.X.X.
+```
 
 
 
