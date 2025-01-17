@@ -1,5 +1,5 @@
 # opnsense-porkbun-ddclient-fix
-Fix for the OPNsense Dynamic DNS service ddclient Porkbun API plugin
+### Fix for the OPNsense Dynamic DNS service ddclient Porkbun API plugin
 
 Porkbun updated thier API URL but the ddclient plugin has not been updated yet. People have suggesting using the caddy plugin since it has updated its Porkbun parts but I didn't feel like changing yet. So, until the plugin is updated, you can update the `ddclient` perl script yourself at `/usr/local/sbin/ddclient`!
 
@@ -20,7 +20,7 @@ The problem, is the 'on-root-domain' logic part of the script to organize the en
     $domain = $host;
 ```
 
-## But, let's just fix the logic anyway. Below are the steps to update the API URL and also add logic to split subdomains for properfly formatted endpoint calls.
+### But, let's just fix the logic anyway. Below are the steps to update the API URL and also add logic to split subdomains for properfly formatted endpoint calls.
 
 1. First we're going to enable ssh access. I usually have this disbaled unless I **have** to access the shell. Go to `System > Settings > Administration`. Check **Enable Secure Shell**
 2. And also check **Permit password login**
@@ -89,7 +89,7 @@ Starting at: `if ($config{$host}{'on-root-domain'}) {`
 3) Now check the Logs:
 
 ![image](https://github.com/user-attachments/assets/18fb8b0d-7a00-4726-8785-d1a28d5d6299)
-
+###### We Have SUCCESSES and FAILS where we'd expect. Success where there's actually a DNS record to update.
 ```
 Notice	ddclient	 SENDING:  Curl system cmd to https://api.porkbun.com
 
