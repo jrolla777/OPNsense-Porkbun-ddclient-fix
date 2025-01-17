@@ -8,7 +8,7 @@ OK,  we need to update the API URL. That's easy, simple **sed** command to subst
 Here's an example of a correctly formatted `retrieveByNameType` API Endpoint:
 `/api/json/v3/dns/retrieveByNameType/domain.com/A/subdomain`
 
-**Note: **Multiple subdomains are simply stacked. For exmaple, the URI Endpoint for host: `sub2.sub1.domain.com` would be:
+**Note:** Multiple subdomains are simply stacked. For exmaple, the URI Endpoint for host: `sub2.sub1.domain.com` would be:
 
 `https://api.porkbun.com/api/json/v3/dns/retrieveByNameType/domain.com/A/sub2.sub1`
 
@@ -20,7 +20,7 @@ The problem, is the 'on-root-domain' logic part of the script to organize the en
     $domain = $host;
 ```
 
-But, let's just fix the logic anyway. Below are the steps to update the API URL and also add logic to split subdomains for properfly formatted endpoint calls.
+## But, let's just fix the logic anyway. Below are the steps to update the API URL and also add logic to split subdomains for properfly formatted endpoint calls.
 
 1. First we're going to enable ssh access. I usually have this disbaled unless I **have** to access the shell. Go to `System > Settings > Administration`. Check **Enable Secure Shell**
 2. And also check **Permit password login**
@@ -75,7 +75,9 @@ Starting at: `if ($config{$host}{'on-root-domain'}) {`
 16. Then click **Apply** at the bottom of the page.
 
 
-To test this it's all working:
+
+## And to verify it's all working:
+
 1) You'll need active current Porkbun A Type DNS Records
 
 ![image](https://github.com/user-attachments/assets/0570c5e3-dbe3-4758-8c8f-360d60e89e36)
