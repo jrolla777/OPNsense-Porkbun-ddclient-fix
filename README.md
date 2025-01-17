@@ -30,8 +30,8 @@ But, let's just fix the logic anyway. Below are the steps to update the API URL 
 
 
 4. Log into your opnsense through your favorite terminal as a **non-root** user
-5. Log in as root, **run:** `su root`
-6. Press **8** for Shell and hit enter
+5. Switch to root, **run:** `su root`
+6. Press **8** for **Shell** at the OPNsense menu and hit enter
 7. Add 'api' to two URLs in ddclient around line 7113 and 7167,
 
    **run:** `sed -i -e 's|$url = \"https://porkbun.com/api|$url = \"https://api.porkbun.com/api|g' /usr/local/sbin/ddclient`
