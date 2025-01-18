@@ -18,7 +18,7 @@ Here's an example of a correctly formatted `retrieveByNameType` API Endpoint:
 `https://api.porkbun.com/api/json/v3/dns/retrieveByNameType/domain.com/A/sub2.sub1`
 
 
-The problem, is the 'on-root-domain' logic part of the script to organize the endpoint, it's unnecessary. You could comment out the `if ($config{$host}{'on-root-domain'})' block below in Step 10, replace with these two lines, and call it a day if you don't use subdomains:
+The problem, is the 'on-root-domain' logic part of the script to organize the endpoint. You could comment out the `if ($config{$host}{'on-root-domain'})' block below in Step 10, replace with these two lines, and call it a day if you don't use subdomains:
 
 ```
     $sub_domain = '';
