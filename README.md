@@ -6,11 +6,12 @@
 
 ##### Disclaimer: The configurations and suggestions provided are for informational purposes only and are used at your own risk. I am not liable for any damage, data loss, or security issues resulting from their implementation. Please note that I am not affiliated with OPNsense or Porkbun in any way.
 
-Porkbun updated thier API URL but the ddclient plugin has not been updated yet. People have suggesting using the caddy plugin since it has updated its Porkbun parts but I didn't feel like changing yet. So, until the plugin is updated, you can update the `ddclient` perl script yourself at `/usr/local/sbin/ddclient`!
 
-Updating the API URL was pretty simple. The next problem was the ddclient plugin Porkbun code was using incorrect **editByNameType** URI endpoints (newest docs here: `https://porkbun.com/api/json/v3/documentation`). I'm not sure if Porkbun's API call formating was changed at some point but there's lots of threads online about this plugin's issues handling Porkbun subdomains before the URL change. I don't know. 
+Porkbun updated thier API URL but the ddclient plugin had not been updated yet. People had suggested using the caddy plugin since it has updated its Porkbun parts but I didn't feel like changing yet. So, until the plugin is updated fully, you can update the `ddclient` perl script yourself.
 
-Here's an example of a correctly formatted `retrieveByNameType` API Endpoint:
+Updating the API URL was pretty simple. The next problem was the ddclient plugin Porkbun code was using incorrect **editByNameType** URI endpoints (newest docs here: `https://porkbun.com/api/json/v3/documentation`). I'm not sure if Porkbun's API call formating was changed at some point but there's lots of threads online about this plugin's issues handling Porkbun subdomains before the URL change. The proper fix will should use the `on-root-domain` config from the original script but I havent had time for that yet.
+
+A correctly formatted `retrieveByNameType` API Endpoint:
 `/api/json/v3/dns/retrieveByNameType/domain.com/A/subdomain`
 
 **Note:** Multiple subdomains are simply stacked. For exmaple, the URI Endpoint for host: `sub2.sub1.domain.com` would be:
@@ -18,14 +19,14 @@ Here's an example of a correctly formatted `retrieveByNameType` API Endpoint:
 `https://api.porkbun.com/api/json/v3/dns/retrieveByNameType/domain.com/A/sub2.sub1`
 
 
-The problem, is the 'on-root-domain' logic part of the script to organize the endpoint. You could comment out the `if ($config{$host}{'on-root-domain'})' block below in Step 10, replace with these two lines, and call it a day if you don't use subdomains:
+The problem, is the 'on-root-domain' logic part of the script to organize the endpoint. It's not using my `domain.com` correctly in the endpoint. You could comment out the `if ($config{$host}{'on-root-domain'})' block below in Step 10, replace with these two lines, and call it a day if you don't use subdomains:
 
 ```
     $sub_domain = '';
     $domain = $host;
 ```
 
-### But, let's just fix the logic anyway. Below are the steps to update the API URL and also add logic to split subdomains for properfly formatted endpoint calls.
+### But, let's just fix the logic anyway. I understand the regex in my new split function doesnt work for domains like domain.it.io where the top-level domain (TLD) is split by a period (.it.io). Here are the steps to update the API URL and also add logic to split traditional TLD subdomains for properfly formatted endpoint calls.
 
 1. First we're going to enable ssh access. I usually have this disbaled unless I **have** to access the shell. Go to `System > Settings > Administration`. Check **Enable Secure Shell**
 2. And also check **Permit password login**
