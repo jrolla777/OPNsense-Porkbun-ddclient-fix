@@ -1,12 +1,12 @@
 # opnsense-porkbun-ddclient-fix
 ### Fix for the OPNsense Dynamic DNS service ddclient Porkbun API plugin
 
-Porkbun updated thier API URL but the ddclient plugin has not been updated yet. People have suggesting using the caddy plugin since it has updated its Porkbun parts but I didn't feel like changing yet. So, until the plugin is updated, you can update the `ddclient` perl script yourself at `/usr/local/sbin/ddclient`!
+#### Update 2025-01-17: I updated to my OPNsense firewall to v24.7.12 and it looks like ddclient was updated too, 3.11.2_2 (https://github.com/ddclient/ddclient/releases). I'd chosen not to lock the ddclient package in OPNsense so I'd see these updates and their effects. 
+#### After the ddclient update today, my logs are showing ddclinet is using the new API URL but reverted to the wrong endpoint `/domain/A/subdomain` format. my Porkbun API endpoints are failing and using the wrong format: `https://api.porkbun.com/api/json/v3/dns/retrieveByNameType/com/A/domain `. I re-applied the new logic block from Step 11 and the plugin and working again!
 
 ##### Disclaimer: The configurations and suggestions provided are for informational purposes only and are used at your own risk. I am not liable for any damage, data loss, or security issues resulting from their implementation. Please note that I am not affiliated with OPNsense or Porkbun in any way.
 
-### Update 2025-01-17: Updated to OPNsense to version 24.7.12, looks like ddclient updated to latest release 3.11.2_2 (https://github.com/ddclient/ddclient/releases). 
-###
+Porkbun updated thier API URL but the ddclient plugin has not been updated yet. People have suggesting using the caddy plugin since it has updated its Porkbun parts but I didn't feel like changing yet. So, until the plugin is updated, you can update the `ddclient` perl script yourself at `/usr/local/sbin/ddclient`!
 
 Updating the API URL was pretty simple. The next problem was the ddclient plugin Porkbun code was using incorrect **editByNameType** URI endpoints (newest docs here: `https://porkbun.com/api/json/v3/documentation`). I'm not sure if Porkbun's API call formating was changed at some point but there's lots of threads online about this plugin's issues handling Porkbun subdomains before the URL change. I don't know. 
 
@@ -87,9 +87,11 @@ Starting at: `if ($config{$host}{'on-root-domain'}) {`
 
 ![image](https://github.com/user-attachments/assets/0570c5e3-dbe3-4758-8c8f-360d60e89e36)
 
-2) Proably should have stopped the service before we started, but go ahead and restart it now:
+2) Probably should have stopped the service before we started, but go ahead and restart it now:
 
-![image](https://github.com/user-attachments/assets/72e10ea1-9974-4835-8b32-5244c0a4c930)
+![image](https://github.com/user-attachments/assets/13ba2c2a-2b32-4ccb-85b5-914b30b36f56)
+
+
 
 3) Now check the Logs:
 
