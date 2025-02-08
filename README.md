@@ -2,7 +2,7 @@
 ### Fix for the OPNsense Dynamic DNS service ddclient Porkbun API plugin
 
 ###### [Update 2025-01-17]: 
-###### I updated my OPNsense firewall to v24.7.12 and it looks like ddclient was updated too, v3.11.2_2. I'd chosen not to lock the ddclient package in OPNsense so I'd see these updates and their effects. After the update, my logs showed ddclinet is using the new API URL but reverted to the wrong endpoint `/domain/A/subdomain` format. So we see the Porkbun plugin API endpoints fail, using the wrong format: `https://api.porkbun.com/api/json/v3/dns/retrieveByNameType/com/A/domain `. I reapplied the fixes below and the plugin is now working!
+###### I updated my OPNsense firewall to v24.7.12 and it looks like ddclient was updated too, v3.11.2_2. I'd chosen not to lock the ddclient package in OPNsense so I'd see these updates and their effects. After the update, my logs showed ddclinet is using the new API URL but reverted to the wrong endpoint `/domain/A/subdomain` format. So we see the Porkbun plugin API endpoints fail, using the wrong format: `https://api.porkbun.com/api/json/v3/dns/retrieveByNameType/com/A/domain `. I reapplied the fixes below and my plugin is working again!
 
 ##### Disclaimer: The configurations and suggestions provided are for informational purposes only and are used at your own risk. I am not liable for any damage, data loss, or security issues resulting from their implementation. Please note that I am not affiliated with OPNsense or Porkbun in any way.
 
@@ -12,15 +12,14 @@ Porkbun updated thier API URL but the ddclient plugin had not been updated yet. 
 
 Updating the API URL was pretty simple. The next problem was the ddclient plugin Porkbun code was using incorrect **editByNameType** URI endpoints (newest docs here: `https://porkbun.com/api/json/v3/documentation`). I'm not sure if Porkbun's API call formating was changed at some point but there's lots of threads online about this plugin's issues handling Porkbun subdomains before the URL change. The proper fix will should use the `on-root-domain` config from the original script but I havent had time for that yet.
 
-A correctly formatted `retrieveByNameType` API Endpoint:
-`/api/json/v3/dns/retrieveByNameType/domain.com/A/subdomain`
+##### This is the correctly formatted `retrieveByNameType` API Endpoint: `/api/json/v3/dns/retrieveByNameType/domain.com/A/subdomain`
 
 **Note:** Multiple subdomains are simply stacked. For exmaple, the URI Endpoint for host: `sub2.sub1.domain.com` would be:
 
 `https://api.porkbun.com/api/json/v3/dns/retrieveByNameType/domain.com/A/sub2.sub1`
 
 
-The 'on-root-domain' logic part of the script to organize the endpoint doesnt seem to be working. It's not using my `domain.com` correctly in the endpoint. You could comment out the `if ($config{$host}{'on-root-domain'})' block below in Step 10, replace with these two lines, and call it a day if you don't use subdomains:
+The 'on-root-domain' logic part of the script to organize the endpoint doesnt seem to be working. It's not using my `domain.com` correctly in the endpoint. You could comment out the `if ($config{$host}{'on-root-domain'})' block below in Step 11, replace with these two lines, and call it a day if you don't use subdomains:
 
 ```
     $sub_domain = '';
@@ -39,7 +38,7 @@ The 'on-root-domain' logic part of the script to organize the endpoint doesnt se
 4. Log into your opnsense through your favorite terminal as a **non-root** user
 5. Switch to root, **run:** `su root`
 6. Press **8** for **Shell** at the OPNsense menu and hit enter
-7. Add 'api' to two URLs in ddclient around line 7113 and 7167,
+7. Add `api` to two URLs in ddclient around line 7113 and 7167,
 
    **run:** `sed -i -e 's|$url = \"https://porkbun.com/api|$url = \"https://api.porkbun.com/api|g' /usr/local/sbin/ddclient`
 8. Now let's edit `ddclient`, **run:** `nano /usr/local/sbin/ddclient`  (`pkg install nano` if you don't have it installed)
@@ -47,12 +46,11 @@ The 'on-root-domain' logic part of the script to organize the endpoint doesnt se
 
 10. Press `Ctrl + F` and enter once more should get you to the Porkbun section around line 7090. Directly below are two `foreach` loops. Inside them around Line 7104 is an `if` block. Comment or delete the `if` and `else` lines and parantheses.
 
-Starting at: `if ($config{$host}{'on-root-domain'}) {`
+11. Find the `if` block starting with: `if ($config{$host}{'on-root-domain'}) {` 
 
 ![image](https://github.com/user-attachments/assets/aec62aec-6f51-47e7-ba11-49370c404ef4)
 
-
-11. In its place, put this block:
+12. Remove/comment/whatever and in its place, put this block:**
 ```
             my $dot_count = ($host =~ tr/.//);
             if ($dot_count < 1) {
