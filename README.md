@@ -1,5 +1,5 @@
 # opnsense-porkbun-ddclient-fix
-### Fix for the OPNsense Dynamic DNS service ddclient Porkbun API plugin
+### Fix for the OPNsense DDNS ddclient plugin's Porkbun API
 
 ###### [Update 2025-01-17]: 
 ###### I updated my OPNsense firewall to v24.7.12 and it looks like ddclient was updated too, v3.11.2_2. I'd chosen not to lock the ddclient package in OPNsense so I'd see these updates and their effects. After the update, my logs showed ddclinet is using the new API URL but reverted to the wrong endpoint `/domain/A/subdomain` format. So we see the Porkbun plugin API endpoints fail, using the wrong format: `https://api.porkbun.com/api/json/v3/dns/retrieveByNameType/com/A/domain `. I reapplied the fixes below and my plugin is working again!
