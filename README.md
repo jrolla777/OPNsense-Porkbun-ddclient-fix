@@ -12,7 +12,7 @@ Porkbun updated thier API URL but the ddclient plugin had not been updated yet. 
 
 Updating the API URL was pretty simple. The next problem was the ddclient plugin Porkbun code was using incorrect **editByNameType** URI endpoints (newest docs here: `https://porkbun.com/api/json/v3/documentation`). I'm not sure if Porkbun's API call formating was changed at some point but there's lots of threads online about this plugin's issues handling Porkbun subdomains before the URL change. The proper fix will should use the `on-root-domain` config from the original script but I havent had time for that yet.
 
-##### This is the correctly formatted `retrieveByNameType` API Endpoint: `/api/json/v3/dns/retrieveByNameType/domain.com/A/subdomain`
+#### This is the correctly formatted `retrieveByNameType` API Endpoint: `/api/json/v3/dns/retrieveByNameType/domain.com/A/subdomain`
 
 **Note:** Multiple subdomains are simply stacked. For exmaple, the URI Endpoint for host: `sub2.sub1.domain.com` would be:
 
@@ -26,7 +26,7 @@ The 'on-root-domain' logic part of the script to organize the endpoint doesnt se
     $domain = $host;
 ```
 
-###  Here are the steps to update the API URL and also add logic to split traditional TLD subdomains for properfly formatted endpoint calls. I understand the regex in my new split function doesnt work for domains like domain.it.io where the top-level domain (TLD) is split by a period (.it.io). 
+###  Here are the steps to update the API URL and also add logic to split traditional TLD subdomains for properly formatted endpoint calls. I understand the regex in my new split function doesnt work for domains like domain.it.io where the top-level domain (TLD) is split by a period (.it.io). 
 
 1. First we're going to enable ssh access. I usually have this disbaled unless I **have** to access the shell. Go to `System > Settings > Administration`. Check **Enable Secure Shell**
 2. And also check **Permit password login**
@@ -50,7 +50,8 @@ The 'on-root-domain' logic part of the script to organize the endpoint doesnt se
 
 ![image](https://github.com/user-attachments/assets/aec62aec-6f51-47e7-ba11-49370c404ef4)
 
-12. Remove/comment/whatever and in its place, put this block:**
+12. Remove or comment that block and in its place, put this block.
+##### The regex is basically looking for domains with more than one (1) period and splitting them. Feel free to remove the info debug lines.
 ```
             my $dot_count = ($host =~ tr/.//);
             if ($dot_count < 1) {
@@ -69,15 +70,15 @@ The 'on-root-domain' logic part of the script to organize the endpoint doesnt se
 ```
 ![image](https://github.com/user-attachments/assets/4a5617ef-b402-44ce-ac11-273f5e256ff5)
 
-12. Done. `Ctrl + X`, then `Y` to save, then enter
-13. Now, go to your OPNsense web GUI and **Disable secure shell login!!**
-14. After ssh is disbaled, go to `Services > Dynamic DNS > Settings` and click the **+** to add a server
-15. Click to `Enable this virtual server`, give it a `description`, enter your `username` and `password` (these are the pk1_ and sk1_ key values you get from Porkbun), enter your hostname(s) to update, we'll use the `Interface` **IP check method**, `Interface` is **WAN**, **Enable** `Force SSL`, and then click **Save**
+13. Done. `Ctrl + X`, then `Y` to save, then enter
+14. Now, go to your OPNsense web GUI and **Disable secure shell login!!**
+15. After ssh is disbaled, go to `Services > Dynamic DNS > Settings` and click the **+** to add a server
+16. Click to `Enable this virtual server`, give it a `description`, enter your `username` and `password` (these are the pk1_ and sk1_ key values you get from Porkbun), enter your hostname(s) to update, we'll use the `Interface` **IP check method**, `Interface` is **WAN**, **Enable** `Force SSL`, and then click **Save**
 
 ![image](https://github.com/user-attachments/assets/47316c09-e18b-4e98-a39f-8741a96dd432)
 
 
-16. Then click **Apply** at the bottom of the page.
+17. Then click **Apply** at the bottom of the page.
 
 
 
