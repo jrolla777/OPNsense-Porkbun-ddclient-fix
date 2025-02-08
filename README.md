@@ -1,13 +1,14 @@
 # opnsense-porkbun-ddclient-fix
 ### Fix for the OPNsense Dynamic DNS service ddclient Porkbun API plugin
 
-#### [Update 2025-01-17]: I updated to my OPNsense firewall to v24.7.12 and it looks like ddclient was updated too, 3.11.2_2 (https://github.com/ddclient/ddclient/releases). I'd chosen not to lock the ddclient package in OPNsense so I'd see these updates and their effects. 
-#### After the ddclient update today, my logs are showing ddclinet is using the new API URL but reverted to the wrong endpoint `/domain/A/subdomain` format. My Porkbun API endpoints are failing and using the wrong format: `https://api.porkbun.com/api/json/v3/dns/retrieveByNameType/com/A/domain `. I re-applied the new logic block from Step 11 and the plugin is working again. 
+###### [Update 2025-01-17]: 
+###### I updated my OPNsense firewall to v24.7.12 and it looks like ddclient was updated too, v3.11.2_2. I'd chosen not to lock the ddclient package in OPNsense so I'd see these updates and their effects. After the update, my logs showed ddclinet is using the new API URL but reverted to the wrong endpoint `/domain/A/subdomain` format. So we see the Porkbun plugin API endpoints fail, using the wrong format: `https://api.porkbun.com/api/json/v3/dns/retrieveByNameType/com/A/domain `. I reapplied the fixes below and the plugin is now working!
 
 ##### Disclaimer: The configurations and suggestions provided are for informational purposes only and are used at your own risk. I am not liable for any damage, data loss, or security issues resulting from their implementation. Please note that I am not affiliated with OPNsense or Porkbun in any way.
 
 
-[DEC 2024] Porkbun updated thier API URL but the ddclient plugin had not been updated yet. People had suggested using the caddy plugin since it has updated its Porkbun parts but I didn't feel like changing yet. So, until the plugin is updated fully, you can update the `ddclient` perl script yourself.
+#### [DEC 2024]:
+Porkbun updated thier API URL but the ddclient plugin had not been updated yet. People had suggested using the caddy plugin since it has updated its Porkbun parts but I didn't feel like changing yet. So, until the plugin is updated fully, you can update the `ddclient` perl script yourself.
 
 Updating the API URL was pretty simple. The next problem was the ddclient plugin Porkbun code was using incorrect **editByNameType** URI endpoints (newest docs here: `https://porkbun.com/api/json/v3/documentation`). I'm not sure if Porkbun's API call formating was changed at some point but there's lots of threads online about this plugin's issues handling Porkbun subdomains before the URL change. The proper fix will should use the `on-root-domain` config from the original script but I havent had time for that yet.
 
